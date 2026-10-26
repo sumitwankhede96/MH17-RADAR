@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MH17 RADAR</title>
+<style>
+body{margin:0;background:#020b12;color:#00ffb3;font-family:Arial;text-align:center}
+h1{letter-spacing:4px}
+.radar{width:min(85vw,380px);aspect-ratio:1;margin:25px auto;border:2px solid #00ffb3;border-radius:50%;position:relative;overflow:hidden;background:repeating-radial-gradient(circle,transparent 0 19%,#07563e 20% 20.5%,transparent 21% 29%);box-shadow:0 0 25px #00ffb355}
+.radar:before{content:"";position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0deg,#00ffb366 35deg,transparent 65deg);animation:spin 3s linear infinite}
+.radar:after{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:#087b55}
+.dot{position:absolute;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 12px #00ffb3;left:68%;top:32%}
+@keyframes spin{to{transform:rotate(360deg)}}
+p{color:#9fffdc}
+</style>
+</head>
+<body>
+<h1>MH17 RADAR</h1>
+<p>SYSTEM ONLINE · SIMULATION MODE</p>
+<div class="radar"><span class="dot"></span></div>
+<p>Radar Animation: ACTIVE</p>
+<p>Arduino Sensor: NOT CONNECTED</p>
+</body>
+</html>
+0
