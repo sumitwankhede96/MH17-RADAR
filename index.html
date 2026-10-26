@@ -3,247 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MH17 RADAR | Advanced Scanner</title>
+<title>MH17 RADAR | Tiranga Edition</title>
 <style>
-:root{--bg:#02090d;--panel:#06171d;--cyan:#24ffc1;--muted:#76a99e;--line:#145345;--gold:#ffcf66}
+:root{color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:#d9fff5;font:14px system-ui,Arial}
-header{padding:17px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
-h1{font-size:22px;letter-spacing:3px;margin:0;color:var(--cyan)}
-.sub{font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:5px}
-.status{color:var(--muted);font-size:12px}
-.led{display:inline-block;width:8px;height:8px;background:#744;border-radius:50%;margin-right:7px}
-.led.on{background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
-main{max-width:1100px;margin:auto;padding:12px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,1fr);gap:12px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px;min-width:0}
-.radar-wrap{position:relative;width:100%;aspect-ratio:1/0.9;min-height:250px}
-canvas{width:100%;height:100%;display:block}
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.metric{background:#031014;border:1px solid var(--line);padding:10px;border-radius:7px;min-width:0}
-.metric small{display:block;color:var(--muted);font-size:10px;letter-spacing:1px}
-.metric strong{display:block;font-size:19px;color:var(--cyan);margin-top:5px;overflow-wrap:anywhere}
-h2{font-size:13px;color:var(--cyan);letter-spacing:2px;margin:0 0 12px}
-.controls{display:flex;flex-wrap:wrap;gap:8px}
-button{background:#092a2b;color:var(--cyan);border:1px solid #16856d;border-radius:6px;padding:10px 12px;font-weight:650;cursor:pointer}
-button:hover{background:#10423e}
-button:disabled{opacity:.4;cursor:not-allowed}
-button.primary{background:#0c5948;color:white}
-button.warn{color:var(--gold);border-color:#7b642d}
-.note{color:var(--muted);font-size:12px;line-height:1.55}
-.danger{color:#ffc477}
-#targets{max-height:250px;overflow:auto}
-.target{display:flex;justify-content:space-between;gap:8px;padding:9px 4px;border-bottom:1px solid #12352f;font-size:12px}
-.target strong{color:var(--gold)}
-.empty{color:var(--muted);padding:10px 0}
-footer{text-align:center;color:#547f75;font-size:11px;padding:15px}
-@media(max-width:720px){main{grid-template-columns:1fr}.radar-wrap{min-height:260px}h1{font-size:19px}.metric strong{font-size:17px}}
+body{margin:0;background:#05090c;color:#e8f4f4;
+font-family:Arial,sans-serif}
+header{padding:16px;text-align:center;border-bottom:1px solid #244047}
+h1{margin:0;color:#ff9933;letter-spacing:3px}
+.sub{font-size:12px;color:#aab8bd;margin-top:7px}
+main{max-width:850px;margin:auto;padding:12px}
+.panel{background:#0a1419;border:1px solid #234048;
+border-radius:12px;padding:12px;margin-bottom:12px}
+canvas{width:100%;height:auto;display:block}
+button{background:#13804b;color:white;border:0;border-radius:8px;
+padding:12px 16px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:#071014;padding:12px 5px;text-align:center;
+border:1px solid #21383c;border-radius:8px}
+.stat b{display:block;font-size:20px;color:#fff;margin-top:6px}
+.label{font-size:11px;color:#aab8bd}
+#status{color:#ff9933;margin:10px 0;font-size:13px}
+#targets{color:#ff4b4b;font-size:13px}
+footer{text-align:center;color:#91a0a5;font-size:11px;padding:12px}
 </style>
 </head>
 <body>
 <header>
- <div><h1>MH17 RADAR</h1><div class="sub">ADVANCED ULTRASONIC SCANNER · V2</div></div>
- <div class="status"><span id="led" class="led"></span><span id="status">SYSTEM READY</span></div>
+<h1>MH17 RADAR</h1>
+<div class="sub">INDIAN TRICOLOUR • ULTRASONIC SCANNER • 150°</div>
 </header>
 <main>
- <section class="panel">
-  <h2>LIVE RADAR DISPLAY</h2>
-  <div class="radar-wrap"><canvas id="radar"></canvas></div>
-  <div class="metrics">
-   <div class="metric"><small>ANGLE</small><strong id="angle">90°</strong></div>
-   <div class="metric"><small>DISTANCE</small><strong id="distance">—</strong></div>
-   <div class="metric"><small>ACTIVE TARGETS</small><strong id="count">0</strong></div>
-  </div>
- </section>
- <section class="panel">
-  <h2>CONTROL CENTER</h2>
-  <div class="controls">
-   <button id="demo" class="primary">Start Demo Mode</button>
-   <button id="connect">Connect Arduino</button>
-   <button id="disconnect" disabled>Disconnect</button>
-   <button id="sound" class="warn">Sound: OFF</button>
-   <button id="export">Export CSV</button>
-   <button id="clear">Clear Targets</button>
-  </div>
-  <p class="note">DEMO MODE uses simulated targets. For live readings, connect a compatible Arduino and ultrasonic sensor to a computer running Chrome or Edge over HTTPS.</p>
-  <p class="note danger">This is an ultrasonic scanner, not long-range electromagnetic radar. Sensor readings depend on the hardware, object and environment.</p>
-  <h2 style="margin-top:20px">TARGET TRACKING</h2>
-  <div id="targets"><div class="empty">No targets detected yet.</div></div>
-  <h2 style="margin-top:20px">SYSTEM LOG</h2>
-  <div id="log" class="note" aria-live="polite">System initialized.</div>
- </section>
+<section class="panel">
+<button id="connect">CONNECT ARDUINO</button>
+<button id="clear">CLEAR TARGETS</button>
+<div id="status">● DISCONNECTED — Connect Arduino to begin</div>
+<canvas id="radar" width="700" height="480"></canvas>
+</section>
+<section class="panel stats">
+<div class="stat"><span class="label">ANGLE</span><b id="angle">--°</b></div>
+<div class="stat"><span class="label">DISTANCE</span><b id="distance">-- cm</b></div>
+<div class="stat"><span class="label">TARGETS</span><b id="count">0</b></div>
+</section>
+<section class="panel">
+<b style="color:#ff9933">SCAN INFORMATION</b>
+<p class="sub">Range: 400 cm • Servo sweep: 15°–165°</p>
+<div id="targets">No targets detected yet.</div>
+</section>
+<footer>
+SAFFRON • WHITE • GREEN | MH17 RADAR<br>
+Red dots represent valid ultrasonic distance readings, not object identity.
+</footer>
 </main>
-<footer>MH17 RADAR V2 · Simulation and sensor data are labelled separately.</footer>
-
 <script>
-(()=>{
-const canvas=document.querySelector('#radar'),ctx=canvas.getContext('2d');
+const canvas=document.getElementById('radar');
+const ctx=canvas.getContext('2d');
 const $=id=>document.getElementById(id);
-const statusEl=$('status'),led=$('led');
-let angle=90, distance=null, detections=new Map(), history=[], demoTimer=null;
-let demoOn=false,port=null,reader=null,reading=false,soundOn=false,audio=null;
-let sweep=0,lastBeep=0,buffer='',lastFrame=0;
+const MAX_RANGE=400;
+let samples=[];
+let port=null,reader=null,keepReading=false;
+let lastAngle=null,lastDistance=null;
+const center={x:350,y:420};
+const R=330;
 
-function status(t,on=false){statusEl.textContent=t;led.classList.toggle('on',on)}
-function log(t){$('log').textContent=t}
-function resize(){
- const r=canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);
- canvas.width=Math.max(1,Math.floor(r.width*dpr));
- canvas.height=Math.max(1,Math.floor(r.height*dpr));
- ctx.setTransform(dpr,0,0,dpr,0,0);
+function point(angle,distance){
+  const a=(angle+180)*Math.PI/180;
+  const r=Math.min(distance,MAX_RANGE)/MAX_RANGE*R;
+  return {x:center.x+r*Math.cos(a),y:center.y+r*Math.sin(a)};
 }
-new ResizeObserver(resize).observe(canvas);resize();
+function draw(){
+  const w=canvas.width,h=canvas.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#03090c';ctx.fillRect(0,0,w,h);
+  const cx=center.x,cy=center.y;
+  ctx.lineWidth=1;
+  // Radar range rings
+  for(let d=100;d<=400;d+=100){
+    const r=d/MAX_RANGE*R;
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,Math.PI*195/180,Math.PI*345/180);
+    ctx.strokeStyle='#254b3d';ctx.stroke();
+    const p=point(90,d);
+    ctx.fillStyle='#a8c5ba';ctx.font='12px Arial';
+    ctx.fillText(d+' cm',cx+7,cy-r+14);
+  }
+  // 150-degree scanning sector outline
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  const p1=point(15,MAX_RANGE),p2=point(165,MAX_RANGE);
+  ctx.lineTo(p1.x,p1.y);
+  ctx.arc(cx,cy,R,Math.PI*195/180,Math.PI*345/180);
+  ctx.lineTo(cx,cy);
+  ctx.strokeStyle='#397a55';ctx.stroke();
+  // Tricolour angle markings
+  for(let a=15;a<=165;a+=15){
+    const p=point(a,MAX_RANGE);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p.x,p.y);
+    ctx.strokeStyle=a<65?'#ff9933':a<115?'#dbe7e8':'#138808';
+    ctx.globalAlpha=.18;ctx.stroke();ctx.globalAlpha=1;
+    const q=point(a,MAX_RANGE+0);
+    ctx.fillStyle='#c6d4d6';ctx.font='11px Arial';
+    ctx.fillText(a+'°',q.x-10,q.y-5);
+  }
+  // Red target blips; discard old samples after 8 seconds
+  const now=Date.now();
+  samples=samples.filter(s=>now-s.time<8000);
+  for(const s of samples){
+    const p=point(s.angle,s.distance);
+    const alpha=Math.max(.25,1-(now-s.time)/8000);
+    ctx.globalAlpha=alpha;
+    ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);
+    ctx.fillStyle='#ff2929';ctx.shadowColor='#ff2020';ctx.shadowBlur=12;
+    ctx.fill();ctx.shadowBlur=0;
+  }
+  ctx.globalAlpha=1;
+  // Centre and live sweep
+  ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);
+  ctx.fillStyle='#ff9933';ctx.fill();
+  if(lastAngle!==null){
+    const p=point(lastAngle,MAX_RANGE);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p.x,p.y);
+    ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.stroke();
+  }
+  ctx.fillStyle='#e8f4f4';ctx.font='12px Arial';
+  ctx.fillText('MH17 • LIVE PPI',18,24);
+  ctx.fillText('MAX RANGE 4 m',18,42);
+  $('count').textContent=samples.length;
+  requestAnimationFrame(draw);
+}
+draw();
 
-function beep(){
- if(!soundOn)return;
- const now=Date.now();if(now-lastBeep<220)return;lastBeep=now;
- try{
-  audio=audio||new (window.AudioContext||window.webkitAudioContext)();
-  if(audio.state==='suspended')audio.resume();
-  const o=audio.createOscillator(),g=audio.createGain();
-  o.type='sine';o.frequency.value=880;
-  g.gain.setValueAtTime(.08,audio.currentTime);
-  g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.09);
-  o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.1);
- }catch(e){log('Sound unavailable in this browser.')}
-}
-
-function receive(a,d,source='LIVE'){
- a=Number(a);d=Number(d);
- if(!Number.isFinite(a)||!Number.isFinite(d)||a<0||a>180)return;
- angle=a;distance=d;
- $('angle').textContent=Math.round(a)+'°';
- $('distance').textContent=d>0&&d<=400?d.toFixed(1)+' cm':'Out of range';
- const now=Date.now();
- history.push({time:new Date(now).toISOString(),source,angle:a,distance:d});
- if(history.length>10000)history.shift();
- if(d>0&&d<=400){
-  const key=Math.round(a/5)*5;
-  const existed=detections.has(key);
-  detections.set(key,{angle:a,distance:d,time:now,source});
-  if(!existed)beep();
- }
- for(const [k,v] of detections)if(now-v.time>3000)detections.delete(k);
- updateTargets();
-}
-function updateTargets(){
- $('count').textContent=detections.size;
- const arr=[...detections.values()].sort((a,b)=>a.angle-b.angle);
- $('targets').innerHTML=arr.length?arr.map(t=>
-  `<div class="target"><span>Angle <strong>${Math.round(t.angle)}°</strong></span><span>${t.distance.toFixed(1)} cm</span><span>${t.source}</span></div>`
- ).join(''):'<div class="empty">No active targets. Scan the area or start demo.</div>';
-}
-
-function draw(now){
- const w=canvas.clientWidth,h=canvas.clientHeight;
- ctx.clearRect(0,0,w,h);ctx.fillStyle='#021014';ctx.fillRect(0,0,w,h);
- const cx=w/2,cy=h-18,r=Math.min(w*.46,h*.88),scale=r/400;
- ctx.lineWidth=1;ctx.strokeStyle='#145345';
- for(let cm=100;cm<=400;cm+=100){
-  ctx.beginPath();ctx.arc(cx,cy,cm*scale,Math.PI,Math.PI*2);ctx.stroke();
-  ctx.fillStyle='#76a99e';ctx.font='10px monospace';ctx.fillText(cm+'cm',cx+5,cy-cm*scale+12);
- }
- for(let a=0;a<=180;a+=30){
-  const q=Math.PI-a*Math.PI/180;
-  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(q)*r,cy-Math.sin(q)*r);ctx.stroke();
- }
- sweep=(sweep+.8)%180;
- const q=Math.PI-sweep*Math.PI/180;
- const grad=ctx.createLinearGradient(cx,cy,cx+Math.cos(q)*r,cy-Math.sin(q)*r);
- grad.addColorStop(0,'rgba(36,255,193,.5)');grad.addColorStop(1,'rgba(36,255,193,0)');
- ctx.strokeStyle='#24ffc1';ctx.lineWidth=2;ctx.shadowColor='#24ffc1';ctx.shadowBlur=8;
- ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(q)*r,cy-Math.sin(q)*r);ctx.stroke();
- ctx.shadowBlur=0;
- ctx.fillStyle='rgba(36,255,193,.08)';
- ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,Math.PI,Math.PI*2);ctx.closePath();ctx.fill();
- for(const t of detections.values()){
-  const a=Math.PI-t.angle*Math.PI/180,rr=t.distance*scale;
-  ctx.fillStyle=t.source==='DEMO'?'#ffcf66':'#24ffc1';
-  ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=12;
-  ctx.beginPath();ctx.arc(cx+Math.cos(a)*rr,cy-Math.sin(a)*rr,5,0,Math.PI*2);ctx.fill();
-  ctx.shadowBlur=0;
- }
- for(const [k,t] of detections){
-  if(now-t.time>3000)detections.delete(k);
- }
- if(now-lastFrame>200){lastFrame=now;updateTargets()}
- requestAnimationFrame(draw);
-}
-requestAnimationFrame(draw);
-
-function stopDemo(){
- if(demoTimer)clearInterval(demoTimer);
- demoTimer=null;demoOn=false;$('demo').textContent='Start Demo Mode';
- $('connect').disabled=false;
- for(const [k,v] of detections)if(v.source==='DEMO')detections.delete(k);
- updateTargets();status(port?'Arduino connected':'SYSTEM READY',!!port);
-}
-$('demo').onclick=()=>{
- if(demoOn){stopDemo();log('Demo stopped.');return}
- if(port){log('Disconnect Arduino before starting demo.');return}
- demoOn=true;$('demo').textContent='Stop Demo Mode';$('connect').disabled=true;
- status('DEMO MODE — SIMULATED DATA',true);log('Demo running. These are not real sensor readings.');
- let a=0,step=3;
- demoTimer=setInterval(()=>{
-  a+=step;if(a>=180){a=180;step=-3}if(a<=0){a=0;step=3}
-  const targets=[{angle:45,distance:120},{angle:90,distance:250},{angle:135,distance:180}];
-  const t=targets.reduce((best,x)=>Math.abs(x.angle-a)<Math.abs(best.angle-a)?x:best,targets[0]);
-  receive(a,Math.abs(t.angle-a)<5?t.distance:0,'DEMO');
- },80);
-};
-
-async function disconnect(){
- reading=false;
- try{if(reader){await reader.cancel();reader.releaseLock()}}catch(e){}
- reader=null;
- try{if(port)await port.close()}catch(e){}
- port=null;buffer='';$('connect').disabled=false;$('disconnect').disabled=true;
- stopDemo();status('Disconnected',false);log('Arduino disconnected.');
+function processLine(line){
+  const parts=line.trim().split(',');
+  if(parts.length<2)return;
+  const angle=Number(parts[0]),distance=Number(parts[1]);
+  if(!Number.isFinite(angle)||!Number.isFinite(distance))return;
+  if(angle<15||angle>165)return;
+  lastAngle=angle;
+  $('angle').textContent=angle+'°';
+  if(distance>=2&&distance<=MAX_RANGE){
+    lastDistance=distance;
+    $('distance').textContent=distance.toFixed(1)+' cm';
+    // Avoid adding repeated dots at almost identical angles
+    const existing=samples.find(s=>Math.abs(s.angle-angle)<1.5);
+    if(existing){existing.distance=distance;existing.time=Date.now();}
+    else samples.push({angle,distance,time:Date.now()});
+    $('targets').textContent='RED DOT: echo detected at '+angle+
+      '°, '+distance.toFixed(1)+' cm';
+  }else{
+    $('distance').textContent='No echo';
+  }
 }
 async function connect(){
- if(!('serial'in navigator)){status('Web Serial unavailable',false);log('Use desktop Chrome or Edge over HTTPS.');return}
- try{
-  port=await navigator.serial.requestPort();
-  await port.open({baudRate:9600});
-  reading=true;$('connect').disabled=true;$('disconnect').disabled=false;
-  status('ARDUINO LIVE — SENSOR DATA',true);log('Connected at 9600 baud.');
-  const decoder=new TextDecoderStream();
-  const closed=port.readable.pipeTo(decoder.writable).catch(()=>{});
-  reader=decoder.readable.getReader();
-  while(reading){
-   const {value,done}=await reader.read();if(done)break;
-   if(value){
-    buffer+=value;
-    const lines=buffer.split(/\r?\n/);buffer=lines.pop()||'';
-    for(const line of lines){
-     const m=line.trim().match(/^(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
-     if(m)receive(+m[1],+m[2],'LIVE');
-    }
-    if(buffer.length>200)buffer='';
-   }
+  if(!('serial' in navigator)){
+    $('status').textContent='Web Serial unavailable. Use desktop Chrome or Edge over HTTPS.';
+    return;
   }
-  await closed;
- }catch(e){
-  if(e.name!=='NotFoundError')log('Connection error: '+e.message);
-  if(port)await disconnect();
- }
+  try{
+    port=await navigator.serial.requestPort();
+    await port.open({baudRate:9600});
+    $('status').textContent='● CONNECTED — Reading Arduino data';
+    $('connect').disabled=true;
+    keepReading=true;
+    const decoder=new TextDecoderStream();
+    port.readable.pipeTo(decoder.writable).catch(()=>{});
+    reader=decoder.readable.getReader();
+    let buffer='';
+    while(keepReading){
+      const {value,done}=await reader.read();
+      if(done)break;
+      buffer+=value;
+      const lines=buffer.split(/\r?\n/);
+      buffer=lines.pop();
+      for(const line of lines)processLine(line);
+    }
+  }catch(e){
+    $('status').textContent='Connection error: '+e.message;
+  }finally{
+    $('connect').disabled=false;
+  }
 }
-$('connect').onclick=connect;$('disconnect').onclick=disconnect;
-$('sound').onclick=async()=>{
- soundOn=!soundOn;$('sound').textContent='Sound: '+(soundOn?'ON':'OFF');
- if(soundOn){try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();await audio.resume();beep();log('Radar sound enabled.')}catch(e){soundOn=false;$('sound').textContent='Sound: OFF';log('Audio not available.')}}else log('Radar sound disabled.');
-};
-$('clear').onclick=()=>{detections.clear();updateTargets();log('Active targets cleared.');};
-$('export').onclick=()=>{
- if(!history.length){log('No readings to export yet.');return}
- const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
- const rows=[['time','source','angle_degrees','distance_cm'],...history.map(x=>[x.time,x.source,x.angle,x.distance])];
- const csv=rows.map(row=>row.map(esc).join(',')).join('\r\n');
- const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
- const a=document.createElement('a');a.href=url;a.download='MH17_RADAR_readings.csv';a.click();URL.revokeObjectURL(url);
- log('CSV exported: '+history.length+' readings.');
-};
-if(!('serial'in navigator))log('Demo works in this browser. Arduino USB needs desktop Chrome/Edge.');
-})();
+$('connect').addEventListener('click',connect);
+$('clear').addEventListener('click',()=>{
+  samples=[];$('targets').textContent='Targets cleared.';
+});
 </script>
 </body>
 </html>
