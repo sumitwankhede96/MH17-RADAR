@@ -116,7 +116,7 @@ function receive(a,d,source='LIVE'){
  const now=Date.now();
  history.push({time:new Date(now).toISOString(),source,angle:a,distance:d});
  if(history.length>10000)history.shift();
- if(d>0&&d<=400){
+ if(source==='LIVE'&&d>0&&d<=400){
   const key=Math.round(a/5)*5;
   const existed=detections.has(key);
   detections.set(key,{angle:a,distance:d,time:now,source});
