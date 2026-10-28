@@ -223,12 +223,8 @@ async function connect(){
   }
   await closed;
  }catch(e){
-  const message = e.name === 'NotFoundError'
-   ? 'No port selected.'
-   : 'Connection error: ' + e.message;
+  if(e.name!=='NotFoundError')log('Connection error: '+e.message);
   if(port)await disconnect();
-  status('Connection failed',false);
-  log(message);
  }
 }
 $('connect').onclick=connect;$('disconnect').onclick=disconnect;
