@@ -143,6 +143,52 @@ footer{
  }
 }
 
+
+/* MH17 HUD UPGRADE V2 */
+header, main, footer { position:relative; }
+.panel { isolation:isolate; }
+.panel:after {
+ content:"";position:absolute;inset:5px;pointer-events:none;
+ border:1px solid rgba(33,230,255,.07);
+ clip-path:polygon(0 0,18px 0,18px 1px,1px 1px,1px 18px,0 18px,
+ calc(100% - 18px) 0,100% 0,100% 18px,calc(100% - 1px) 18px,
+ calc(100% - 1px) 1px,calc(100% - 18px) 1px,
+ calc(100% - 18px) 0,100% 0,100% 100%,calc(100% - 18px) 100%,
+ calc(100% - 18px) calc(100% - 1px),calc(100% - 1px) calc(100% - 1px),
+ calc(100% - 1px) calc(100% - 18px),100% calc(100% - 18px),
+ 100% 100%,0 100%,0 calc(100% - 18px),1px calc(100% - 18px),
+ 1px calc(100% - 1px),18px calc(100% - 1px),18px 100%,0 100%);
+}
+.radar-wrap canvas { filter:drop-shadow(0 0 3px #21e6ff22); }
+.metric { position:relative;overflow:hidden; }
+.metric:after {
+ content:"";position:absolute;left:0;bottom:0;width:100%;height:2px;
+ background:linear-gradient(90deg,transparent,#21e6ff,transparent);
+ opacity:.45;
+}
+.controls { margin:8px 0 14px; }
+button { min-height:40px;letter-spacing:.2px; }
+.target { align-items:center; }
+.target span:last-child {
+ color:#65edff;font-size:10px;letter-spacing:1px;
+}
+#log {
+ min-height:38px;padding:10px;border:1px solid #123b4b;
+ border-radius:4px;background:#020d15;overflow-wrap:anywhere;
+}
+.status { max-width:100%;overflow-wrap:anywhere; }
+@media(min-width:1000px) {
+ .radar-wrap { min-height:390px; }
+ .panel { padding:16px; }
+}
+@media(prefers-reduced-motion:no-preference) {
+ .panel:before { animation:edge-glow 5s ease-in-out infinite; }
+ @keyframes edge-glow {
+  0%,100% { opacity:.45; }
+  50% { opacity:1; }
+ }
+}
+
 </style>
 </head>
 <body>
