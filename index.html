@@ -37,6 +37,112 @@ button.warn{color:var(--gold);border-color:#7b642d}
 .empty{color:var(--muted);padding:10px 0}
 footer{text-align:center;color:#547f75;font-size:11px;padding:15px}
 @media(max-width:720px){main{grid-template-columns:1fr}.radar-wrap{min-height:260px}h1{font-size:19px}.metric strong{font-size:17px}}
+
+/* MH17 HUD UPGRADE V1 */
+:root{
+ --bg:#01070d;--panel:rgba(4,20,31,.94);
+ --cyan:#21e6ff;--muted:#7ca9bb;--line:#14516a;
+ --gold:#ffd166;
+}
+body{
+ background:
+  radial-gradient(ellipse at 50% 0%,#0a2b40 0%,transparent 58%),
+  linear-gradient(135deg,#01060b,#03121b 55%,#01060b);
+ color:#d9f8ff;
+}
+body:before{
+ content:"";position:fixed;inset:0;pointer-events:none;z-index:5;
+ background:repeating-linear-gradient(
+  to bottom,transparent 0px,transparent 3px,
+  rgba(33,230,255,.018) 4px);
+}
+header{
+ background:rgba(1,9,16,.88);
+ border-bottom:1px solid #16718a;
+ box-shadow:0 5px 28px #00bde51a;
+}
+h1{
+ color:var(--cyan);
+ text-shadow:0 0 8px #21e6ff88,0 0 24px #21e6ff33;
+}
+.sub{color:#7dc8da}
+.status{padding:8px 12px;border:1px solid #14516a;
+ border-radius:4px;background:#03131c;letter-spacing:1px}
+.led.on{background:#42ffb0;box-shadow:0 0 7px #42ffb0,0 0 18px #42ffb088}
+main{max-width:1400px;gap:14px;padding:16px}
+.panel{
+ position:relative;overflow:hidden;
+ background:linear-gradient(145deg,rgba(5,27,41,.97),rgba(2,12,21,.98));
+ border:1px solid #14516a;border-radius:5px;
+ box-shadow:inset 0 0 25px #00c8ff08,0 0 18px #00bde50a;
+}
+.panel:before{
+ content:"";position:absolute;top:0;left:12px;right:12px;height:1px;
+ background:linear-gradient(90deg,transparent,#21e6ff,transparent);
+ opacity:.8;pointer-events:none;
+}
+h2{
+ color:var(--cyan);font-size:12px;letter-spacing:2.5px;
+ text-shadow:0 0 10px #21e6ff33;
+}
+.radar-wrap{
+ background:radial-gradient(ellipse,#06233244,transparent 70%);
+ border-radius:4px;
+}
+.metric{
+ background:linear-gradient(135deg,#061b28,#020b12);
+ border:1px solid #16475b;border-radius:4px;
+}
+.metric small{color:#81b5c7;letter-spacing:1.5px}
+.metric strong{
+ color:var(--cyan);text-shadow:0 0 12px #21e6ff35;
+ font-variant-numeric:tabular-nums;
+}
+button{
+ background:linear-gradient(180deg,#082633,#04151f);
+ color:#65edff;border-color:#17627a;border-radius:4px;
+ transition:background .18s,border-color .18s,box-shadow .18s;
+}
+button:hover:not(:disabled){
+ background:#0b3546;border-color:#21e6ff;
+ box-shadow:0 0 14px #21e6ff22;
+}
+button.primary{
+ background:linear-gradient(135deg,#07536a,#087b8c);
+ color:#fff;border-color:#21e6ff;
+}
+button.warn{color:var(--gold);border-color:#7b642d}
+.note{color:#8eb8c7}
+#targets{
+ scrollbar-color:#17627a #03111a;
+}
+.target{
+ border-bottom:1px solid #12394a;
+ background:linear-gradient(90deg,#0a25331a,transparent);
+}
+.target strong{color:var(--gold)}
+.empty{color:#82aaba}
+footer{
+ border-top:1px solid #123b4b;
+ margin-top:8px;color:#608c9c;
+}
+::selection{background:#21e6ff55;color:white}
+@media(max-width:720px){
+ main{padding:9px;gap:10px}
+ .panel{padding:11px}
+ header{padding:13px}
+ .status{font-size:11px}
+ .controls button{flex:1 1 135px}
+}
+@media(prefers-reduced-motion:no-preference){
+ button{animation:none}
+ .led.on{animation:hud-pulse 2s ease-in-out infinite}
+ @keyframes hud-pulse{
+  0%,100%{opacity:1}
+  50%{opacity:.65}
+ }
+}
+
 </style>
 </head>
 <body>
